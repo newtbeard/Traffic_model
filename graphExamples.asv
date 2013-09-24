@@ -18,8 +18,7 @@ nodes = struct('pop', {}, ...
                'pos',        {});  
 for i= 1:numNodes
     nodes(i).pop = pops(i); %All population travels
-    nodes(i).attractions =attr(i);
-    %nodes(i).dest = double(int8(rand(pops(i),1)*100)/10)+1;
+    nodes(i).attractions =attr(i);    
     nodes(i).pos = nodePos(1,:);
 end
 
@@ -60,12 +59,21 @@ for i=1:length(A(:,1))
     tripfe(i,:) = tripfe(i,:)*nodes(i).pop;
     tripfe(i,:) = tripfe(i,:)/denfe;
 end
+%These should sum up to total population
 sum(sum(tripff))
 sum(sum(tripfe))
+%trip distro tables
 tripff
 tripfe
-figure(1)
-gplot(A,nodePos,'-O')
+% figure(1)
+% gplot(A,nodePos,'-O')
 figure(2)
-subplot(3,1,1
-wgPlot(tripff,nodePos,'vertexWeight',pops,'edgeWidth',2);
+title('Impedance Distribution')
+wgPlot(imp,nodePos,'vertexWeight',pops,'vertexMetaData',attr,'edgeWidth',2,'edgeColorMap',jet,'vertexColorMap',cool);
+%xlabel('Impedance'); ylabel('# of Attaractions'); 
+figure(3)
+title('Inverse Square Trip Distribution')
+wgPlot(tripff,nodePos,'vertexWeight',pops*100,'vertexMetaData',attr,'edgeWidth',2,'edgeColorMap',jet,'vertexColorMap',cool);
+figure(4)
+title('Decaying Exponenetial Trip Distribution')
+wgPlot(tripfe,nodePos,'vertexWeight',pops*100,'vertexMetaData',attr,'edgeWidth',2,'edgeColorMap',jet,'vertexColorMap',cool);
