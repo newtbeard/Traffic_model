@@ -67,12 +67,5 @@ tripfe
 figure(1)
 gplot(A,nodePos,'-O')
 figure(2)
-title('Impedance Distribution')
-xlabel('Impedance');
-wgPlot(imp,nodePos,'vertexWeight',pops,'edgeWidth',5,'vertexColorMap',copper);
-figure(3)
-title('Inverse Square Trip Distribution')
-wgPlot(tripff,nodePos,'vertexWeight',pops,'edgeWidth',5,'vertexColorMap',hot);
-figure(4)
-title('Decaying Exponenetial Trip Distribution')
-wgPlot(tripfe,nodePos,'vertexWeight',pops,'edgeWidth',5,'vertexColorMap',cool);
+subplot(3,1,1
+wgPlot(tripff,nodePos,'vertexWeight',pops,'edgeWidth',2);
