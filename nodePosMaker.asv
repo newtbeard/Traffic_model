@@ -1,0 +1,8 @@
+nodePos = zeros(100,2);
+c = 0
+for i = 1:11
+    for j = 1:11
+        c = c+1;
+        nodePos(i,j) = [i,j];          
+    end
+end

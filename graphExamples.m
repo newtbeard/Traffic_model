@@ -2,8 +2,8 @@ clc; clear all;
 
 ff =@(x) x^-2; %friction function
 fe =@(x) exp(-.35*(x-1)); %friction exponential
-numNodes = 10;
-totalPop = 500;
+numNodes = 33;
+totalPop = 5000;
 nodePos = rand(numNodes,2)*10;
 %approx distro of population
 pops = rand(numNodes,1);
