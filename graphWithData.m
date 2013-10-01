@@ -2,19 +2,29 @@ clc; clear all;
 
 ff =@(x) x^-2; %friction function
 fe =@(x) exp(-.35*(x-1)); %friction exponential
+fc =@(x) x^(1/2)*exp(-x);
 numNodes = 100;
-nodePos = rand(numNodes,2)*1000;
+nodePos = zeros(numNodes,2);
+c = 0;
+%change this eventually
+for i = 1:sqrt(numNodes)
+    for j = 1:sqrt(numNodes)
+        c = c+1;
+        nodePos(c,:) = [i,j];          
+    end
+end
+
 %approx distro of population  - From DVRPC
 file = './210 IMP (Car Car).mtx';
 [productionLow,productionHigh,attractionLow,attractionHigh] = loadZoneData();
 A = loadThatSkim(file); %this is the impedance matrix
 %limiting the size of these crazy ass Matrices so we can see if it works
 %at all
-A = A(1:100,1:100);
-productionLow = productionLow(1:100);
-productionHigh = productionHigh(1:100);
-attractionLow = attractionLow(1:100);
-attractionHigh = attractionHigh(1:100);
+A = A(1:numNodes,1:numNodes);
+productionLow = productionLow(1:numNodes);
+productionHigh = productionHigh(1:numNodes);
+attractionLow = attractionLow(1:numNodes);
+attractionHigh = attractionHigh(1:numNodes);
 %end trimming
 
 %Initialize some of thos old fashioned trip tables.
@@ -24,13 +34,16 @@ tripfe = tripff;
 for i=1:length(A(:,1))
     den = 0;
     denfe = 0;
+    denfc = 0;
     for j=1:length(A(1,:))        
         %if A(i,j) == 1  % there is a connection, else shortcircuit loop
         %I do not think we need the short circuit loop as the matrix may be
         % all nonzero
             tripff(i,j) = attractionHigh(j)*ff(A(i,j));
             tripfe(i,j) = attractionHigh(j)*fe(A(i,j));
+            tripfc(i,j) = attractionHigh(j)*fc(A(i,j));
             denfe = tripfe(i,j) + denfe;  
+            denfc = tripfc(i,j) + denfc;  
             den = tripff(i,j) + den;  
         %end
     end    
@@ -38,17 +51,25 @@ for i=1:length(A(:,1))
     tripff(i,:) = tripff(i,:)/den;
     tripfe(i,:) = tripfe(i,:)*productionHigh;
     tripfe(i,:) = tripfe(i,:)/denfe;
+    tripfc(i,:) = tripfc(i,:)*productionHigh;
+    tripfc(i,:) = tripfc(i,:)/denfe;
 end
 
 % figure(1)
 % gplot(A,nodePos,'-O')
 figure(2)
 title('Impedance Distribution')
-wgPlot(A,nodePos,'vertexWeight',productionHigh,'vertexMetaData',attractionHigh,'edgeWidth',2,'edgeColorMap',jet,'vertexColorMap',cool);
+wgPlot(A,nodePos,'vertexWeight',productionHigh,'vertexMetaData',attractionHigh,'edgeWidth',0.002,'edgeColorMap',jet,'vertexColorMap',cool);
 %xlabel('Impedance'); ylabel('# of Attaractions'); 
+figure(1)
+title('Impedance Distribution - Difference of Upper and Lower Triangles')
+wgPlot(upper(A)-lower(A)',nodePos,'vertexWeight',productionHigh,'vertexMetaData',attractionHigh,'edgeWidth',0.002,'edgeColorMap',jet,'vertexColorMap',cool);
 figure(3)
 title('Inverse Square Trip Distribution')
-wgPlot(tripff,nodePos,'vertexWeight',productionHigh,'vertexMetaData',attractionHigh,'edgeWidth',2,'edgeColorMap',jet,'vertexColorMap',cool);
+wgPlot(tripff,nodePos,'vertexWeight',productionHigh,'vertexMetaData',attractionHigh,'edgeWidth',0.002,'edgeColorMap',jet,'vertexColorMap',cool);
 figure(4)
 title('Decaying Exponenetial Trip Distribution')
-wgPlot(tripfe,nodePos,'vertexWeight',productionHigh,'vertexMetaData',attractionHigh,'edgeWidth',2,'edgeColorMap',jet,'vertexColorMap',cool);
+wgPlot(tripfe,nodePos,'vertexWeight',productionHigh,'vertexMetaData',attractionHigh,'edgeWidth',0.002,'edgeColorMap',jet,'vertexColorMap',cool);
+figure(6)
+title('Combined Fiunctional Trip Distribution')
+wgPlot(tripfc,nodePos,'vertexWeight',productionHigh,'vertexMetaData',attractionHigh,'edgeWidth',0.002,'edgeColorMap',jet,'vertexColorMap',cool);
