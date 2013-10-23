@@ -2,7 +2,9 @@ function cenMat = censusPlot(TAZ2k)
 censusData = csvread('./TAZ.csv',1,0);
 aa =  censusData(:,1);
 bb =  censusData(:,2);
-cc =  censusData(:,3);
+%total means of transportation field
+cc =  censusData(:,4);
+% cc =  censusData(:,3);
 cenMat = zeros(3399);
 for ii = 1:length(cc)
     a = find(TAZ2k == aa(ii));
@@ -14,5 +16,7 @@ for ii = 1:length(cc)
             cenMat(a,b) = cc(ii)/density;
         end
     end
+
 end
-    
+
+end
